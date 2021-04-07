@@ -9,8 +9,10 @@ app.use(bodyParser());
 app.use(cors());
 
 // constrollers
+require("./app/controllers/authController")(app);
 require("./app/controllers/personsController")(app);
 require("./app/controllers/accountsController")(app);
 require("./app/controllers/transactionsController")(app);
+require("./app/controllers/documentsController")(app);
 
 app.listen(3333);

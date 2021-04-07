@@ -19,6 +19,7 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const person = await Person.findById(id);
+    // case person does not exist
     if (!person) {
       return res.status(404).json({ message: "Registro não encontrado!" });
     }
@@ -33,6 +34,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { email } = req.body;
+    // case email already exists
     if (await Person.findOne({ email })) {
       return res.status(400).json({ message: "Registro já cadastrado!" });
     }
@@ -50,6 +52,7 @@ router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const person = await Person.findByIdAndUpdate(id, req.body, { new: true });
+    // case person does not exist
     if (!person) {
       return res.status(404).json({ message: "Registro não encontrado!" });
     }
@@ -72,4 +75,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = (app) => app.use("/persons", router);
+module.exports = (app) => app.use("/people", router);

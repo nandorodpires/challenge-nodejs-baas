@@ -14,6 +14,10 @@ const AccountSchema = database.Schema({
     type: Schema.Types.ObjectId,
     ref: "Person",
   },
+  createdA: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Account = database.model("Account", AccountSchema);
