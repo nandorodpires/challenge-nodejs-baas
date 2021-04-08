@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
 
-// list
+// list os accounts
 router.get("/", async (req, res) => {
   try {
     const accounts = await Account.find().populate("person");
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// create
+// create new account
 router.post("/", async (req, res) => {
   try {
     const { person } = req.body;
@@ -40,6 +40,9 @@ router.get("/detail/:accountId", async (req, res) => {
   try {
     const { accountId } = req.params;
     const account = await Account.findById(accountId).populate("person");
+    if (!account) {
+      return res.status(400).json({ message: "Conta não encontrada!" });
+    }
     return res.json(account);
   } catch (error) {
     const { code, message } = error;
@@ -48,6 +51,7 @@ router.get("/detail/:accountId", async (req, res) => {
 });
 
 // balance
+// Getting the balance of logged user
 router.use(authMiddleware).get("/balance", async (req, res) => {
   try {
     const { accountId } = req;

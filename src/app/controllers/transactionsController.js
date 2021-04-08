@@ -1,10 +1,13 @@
 const express = require("express");
 const Transaction = require("../models/transaction");
+const Account = require("../models/account");
+
+const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
 
 // list
-router.get("/:accountId", async (req, res) => {
+router.get("/list", async (req, res) => {
   try {
     const { accountId } = req.params;
     const transactions = await Transaction.find({
@@ -29,38 +32,33 @@ router.post("/", async (req, res) => {
 });
 
 // P2P
-router.post("/:accountId/p2p", async (req, res) => {
+router.use(authMiddleware).post("/p2p", async (req, res) => {
   try {
-    const {
-      accountIn,
-      accountOut,
-      personIn,
-      personOut,
-      date,
-      value,
-    } = req.body;
+    const { person, account, date, value, description } = req.body;
+    const { accountId } = req;
 
-    // insert the transaction (cash-out)
-    const insertOut = {
-      person: accountOut,
-      account: personOut,
+    // account user logged
+    const accountLogged = await Account.findById(accountId);
+
+    // cash out
+    await Transaction.create({
+      person: accountLogged.person,
+      account: accountLogged.id,
       date,
       type: "D",
       value: value * -1,
-      description: "Transferência",
-    };
-    await Transaction.create(insertOut);
+      description,
+    });
 
-    // insert the transaction (cash-in)
-    const insertIn = {
-      person: accountIn,
-      account: personIn,
+    // cash in
+    await Transaction.create({
+      person,
+      account,
       date,
       type: "C",
       value,
-      description: "Transferência",
-    };
-    await Transaction.create(insertIn);
+      description,
+    });
 
     return res
       .status(201)
