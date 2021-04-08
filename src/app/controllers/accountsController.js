@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Account = require("../models/account");
 const Transaction = require("../models/transaction");
+const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.post("/", async (req, res) => {
         .json({ message: "Já existe uma conta cadastrada para esta pessoa!" });
     }
     const account = await Account.create(req.body);
+    account.password = undefined;
     return res.status(201).json(account);
   } catch (error) {
     const { code, message } = error;
@@ -34,7 +36,7 @@ router.post("/", async (req, res) => {
 });
 
 // show
-router.get("/:accountId", async (req, res) => {
+router.get("/detail/:accountId", async (req, res) => {
   try {
     const { accountId } = req.params;
     const account = await Account.findById(accountId).populate("person");
@@ -46,9 +48,9 @@ router.get("/:accountId", async (req, res) => {
 });
 
 // balance
-router.get("/:accountId/balance", async (req, res) => {
+router.use(authMiddleware).get("/balance", async (req, res) => {
   try {
-    const { accountId } = req.params;
+    const { accountId } = req;
     // return the account balance (only the value)
     const balance = await Transaction.aggregate([
       { $match: { account: mongoose.Types.ObjectId(accountId) } },
