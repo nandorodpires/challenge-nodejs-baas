@@ -7,6 +7,45 @@ const authConfig = require("../configs/auth");
 
 const router = express.Router();
 
+/**
+ * @api {post} /auth/login Login
+ * @apiName Account login
+ * @apigroup Auth
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {String} agency Number of agency
+ * @apiParam {String} account Number of account
+ * @apiParam {String} password Password
+ *
+ * @apiParamExample {json} Body Request Example
+ * {
+ *    "agency": 1234,
+ *    "number": 123456,
+ *    "password": "123456"
+ * }
+ *
+ * @apiSuccessExample {json} Success
+ * HTTP/1.1 201 Created:
+ * {
+ *    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNmYxOTE5OTRiNDc1NDQ1MGVmNThiMSIsImlhdCI6MTYxNzg5Mzk3OCwiZXhwIjoxNjE3OTgwMzc4fQ.dwTdeP-nXgOGsn1WJpgoHJcuH2CJ3lXJ26UaOE_DBCM"
+ * }
+ *
+ * @apiErrorExample {json} Error
+ * HTTP/1.1 400 Bad Request
+ * {
+ *    "message": "O campo agency é obrigatório!"
+ * }
+ *
+ * HTTP/1.1 400 Bad Request
+ * {
+ *    "message": "Conta não encontrada!"
+ * }
+ *
+ * HTTP/1.1 400 Bad Request
+ * {
+ *    "message": "Senha inválida!"
+ * }
+ */
 router.post("/login", async (req, res) => {
   try {
     const { agency, number, password } = req.body;

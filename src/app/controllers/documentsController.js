@@ -8,6 +8,32 @@ const router = express.Router();
 router.use(authMiddleware);
 router.use(fileUpload());
 
+/**
+ * @api {post} /documents Send
+ * @apiName New Account
+ * @apigroup Documents
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {File} Document File document
+ *
+ * @apiParamExample {json} Body Request Example
+ * {
+ *    "document": "[file document]"
+ * }
+ *
+ * @apiSuccessExample {json} Success
+ * HTTP/1.1 201 Created:
+ * {
+ *    "message": "Documento enviado com sucesso!",
+ * }
+ *
+ * @apiErrorExample {json} Error
+ * HTTP/1.1 400 Bad Request
+ * {
+ *    "message": "Falha ao enviar documento!"
+ * }
+ *
+ */
 router.post("/", async (req, res) => {
   try {
     const { files } = req;
